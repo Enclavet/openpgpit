@@ -42,8 +42,9 @@ cp public.key /home/<user>/public.key
 Setup extprograms for sieve in dovecot
 ```
 vi /etc/dovecot/dovecot.conf
-
+```
 Look for the following and change:
+```
 plugin {
   sieve = /var/mail/sievescript/%n/.dovecot.sieve
   sieve_dir = /var/mail/sievescript/%n/scripts/
@@ -53,3 +54,40 @@ plugin {
   sieve_filter_bin_dir = /etc/dovecot/sieve-filter
 }
 ```
+Create the dovecot sieve-filter directory and place the wrapper script
+```
+mkdir /etc/dovecot/sieve-filter
+chown vmail:mail /etc/dovecot/sieve-filter
+vi /etc/dovecot/sieve-filter/openpgpjswrapper
+```
+Paste the following:
+```
+#!/bin/bash
+
+myvar=$(cat); echo "${myvar}" | /usr/local/src/openpgpit/pgp.js $1
+```
+Make the script executable
+```
+chmod +x /etc/dovecot/sieve-filter/openpgpjswrapper
+```
+Create the sieve rule
+```
+vi /var/mail/sievescript/<userid>/scripts/managesieve.sieve
+```
+Paste the following:
+```
+require ["fileinto", "vnd.dovecot.filter"];
+# rule:[Encryption]
+if true
+{
+        filter "openpgpjswrapper" "/home/<userid>/public.key";
+        fileinto "INBOX";
+}
+```
+Restart dovecot
+```
+/etc/init.d/dovecot restart
+```
+Finished!
+
+
