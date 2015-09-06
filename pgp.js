@@ -21,7 +21,7 @@ var iscontentheader = false;
 rl.on('line', function(line){
     if(!isbody && !isencrypted) {
         if(!line.match(/^\s*$/)) {
-            if(line.match(/pgp-encrypted|pkcs7-mime|report/i)) {
+            if(line.match(/encrypted|pkcs7-mime|report/i)) {
                 isencrypted = true;
 		console.log(line);
             } else if(line.match(/content-type|content-transfer-encoding|mime-version/i)) {
