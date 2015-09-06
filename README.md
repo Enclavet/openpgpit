@@ -24,16 +24,32 @@ Install nodejs and npm
 apt-get install nodejs
 apt-get install npm
 ```
-
 Clone the openpgpit repository
 ```
 cd /usr/local/src
 git clone https://github.com/Enclavet/openpgpit/
 ```
-
 Install dependencies
 ```
 npm install util
 npm install fs
 npm install openpgp
+```
+Copy/Upload your public key to your user's home directory
+```
+cp public.key /home/<user>/public.key
+```
+Setup extprograms for sieve in dovecot
+```
+vi /etc/dovecot/dovecot.conf
+
+Look for the following and change:
+plugin {
+  sieve = /var/mail/sievescript/%n/.dovecot.sieve
+  sieve_dir = /var/mail/sievescript/%n/scripts/
+  sieve_before = /etc/dovecot/global_script/
+  sieve_plugins = sieve_extprograms
+  sieve_extensions = +vnd.dovecot.filter
+  sieve_filter_bin_dir = /etc/dovecot/sieve-filter
+}
 ```
