@@ -1,5 +1,6 @@
 # openpgpit
-Node.js script to encrypt an email to PGP/Mime format using OpenPGP.js
+Node.js script to encrypt an email to PGP/Mime format using OpenPGP.js. Inspired by the following guide: https://perot.me/encrypt-specific-incoming-emails-using-dovecot-and-sieve and the following associated script:
+https://github.com/mikecardwell/gpgit
 
 ###Requirements
 ```
