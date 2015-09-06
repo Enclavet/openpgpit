@@ -24,11 +24,13 @@ Install nodejs and npm
 ```
 apt-get install nodejs
 apt-get install npm
+ln -s /usr/bin/nodejs /usr/local/bin/node
 ```
 Clone the openpgpit repository
 ```
 cd /usr/local/src
 git clone https://github.com/Enclavet/openpgpit/
+chmod +x /usr/local/src/openpgpit/pgp.js
 ```
 Install dependencies
 ```
