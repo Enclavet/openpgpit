@@ -49,11 +49,10 @@ rl.on('line', function(line){
     }
 });
 
-if(!setcontent) {
-    body = "Content-Type: text/plain\n"+body;
-}
-
 rl.on('close', function() {
+    if(!setcontent) {
+        body = "Content-Type: text/plain\n"+body;
+    }
     if(!isencrypted) {
 	var openpgp = require('openpgp');
 	var publicKeyobj = openpgp.key.readArmored(publickey);
