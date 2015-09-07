@@ -18,11 +18,13 @@ var isencrypted = false;
 var body = "";
 var iscontentheader = false;
 var boundary = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+var setcontent = false;
 
 rl.on('line', function(line){
     if(!isbody && !isencrypted) {
         if(!line.match(/^\s*$/)) {
             if(line.match(/^content-type|^content-transfer-encoding|^mime-version/i)) {
+                setcontent = true;
 		if(line.match(/encrypted|pkcs7-mime|report/i)) {
                     isencrypted = true;
                     console.log(line);
@@ -46,6 +48,10 @@ rl.on('line', function(line){
         body += line+'\n';
     }
 });
+
+if(!setcontent) {
+    body = "Content-Type: text/plain\n"+body;
+}
 
 rl.on('close', function() {
     if(!isencrypted) {
