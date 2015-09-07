@@ -17,6 +17,7 @@ var isbody = false;
 var isencrypted = false;
 var body = "";
 var iscontentheader = false;
+var boundary = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
 rl.on('line', function(line){
     if(!isbody && !isencrypted) {
@@ -50,18 +51,24 @@ rl.on('close', function() {
 	var publicKeyobj = openpgp.key.readArmored(publickey);
 	//console.log(body);
 	openpgp.encryptMessage(publicKeyobj.keys, body).then(function(pgpMessage) {
-	    console.log('Content-Type: multipart/encrypted; protocol="application/pgp-encrypted"; boundary="6Jge4tP5WExmTiKQstEJ"');
+	    console.log('Content-Type: multipart/encrypted; protocol="application/pgp-encrypted"; boundary="'+boundary+'"');
 	    console.log('MIME-Version: 1.0\n');
-	    console.log('--6Jge4tP5WExmTiKQstEJ');
+	    console.log('--'+boundary);
 	    console.log('Content-Type: application/pgp-encrypted; Version="1"');
 	    console.log('MIME-Version: 1.0\n');
-	    console.log('--6Jge4tP5WExmTiKQstEJ');
+	    console.log('--'+boundary);
 	    console.log('Content-Type: application/octet-stream');
 	    console.log('MIME-Version: 1.0\n');
 	    console.log(pgpMessage);
-	    console.log('--6Jge4tP5WExmTiKQstEJ--');
+	    console.log('--'+boundary+'--');
 	}).catch(function(error) {
 	    // failure 
 	});
     }
 });
+
+function randomString(length, chars) {
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+    return result;
+}
