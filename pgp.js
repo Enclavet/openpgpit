@@ -22,12 +22,14 @@ var boundary = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJK
 rl.on('line', function(line){
     if(!isbody && !isencrypted) {
         if(!line.match(/^\s*$/)) {
-            if(line.match(/encrypted|pkcs7-mime|report/i)) {
-                isencrypted = true;
-		console.log(line);
-            } else if(line.match(/content-type|content-transfer-encoding|mime-version/i)) {
-		body += line+'\n';
-                iscontentheader = true;
+            if(line.match(/^content-type|^content-transfer-encoding|^mime-version/i)) {
+		if(line.match(/encrypted|pkcs7-mime|report/i)) {
+                    isencrypted = true;
+                    console.log(line);
+		} else {
+		    body += line+'\n';
+                    iscontentheader = true;
+                }
 	    } else if(line.match(/^(\t| )/) && iscontentheader) {
                 body += line+'\n';
             } else {
