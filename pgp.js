@@ -15,10 +15,13 @@ var rl = readline.createInterface({
 
 var isbody = false;
 var isencrypted = false;
-var body = "";
 var iscontentheader = false;
-var boundary = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 var setcontent = false;
+
+var body = "";
+var origheader = "";
+
+var boundary = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
 rl.on('line', function(line){
     if(!isbody && !isencrypted) {
@@ -29,18 +32,18 @@ rl.on('line', function(line){
                     isencrypted = true;
                     console.log(line);
 		} else {
-		    body += line+'\n';
                     iscontentheader = true;
+		    origheader += line+'\n';
                 }
 	    } else if(line.match(/^(\t| )/) && iscontentheader) {
-                body += line+'\n';
+                origheader += line+'\n';
             } else {
                 if(iscontentheader) { iscontentheader = false; }
                 console.log(line);
             }
         } else {
             isbody = true;
-            body += "\n";
+            body += '\n';
         } 
     } else if(isencrypted) {
         console.log(line);
@@ -53,6 +56,15 @@ rl.on('close', function() {
     if(!setcontent) {
         body = "Content-Type: text/plain\n"+body;
     }
+
+    var fixmixed = "";
+    if(origheader.match(/multipart\/mixed/i)) {
+       var origboundary = origheader.match(/boundary=("|)([^"&^\s]+)/i)[2];
+       fixmixed += '--'+origboundary+'\n';
+       fixmixed += 'Content-Type: text/plain\n';
+    }
+    origheader = origheader+'\n'+fixmixed;
+    body = origheader+''+body;
     if(!isencrypted) {
 	var openpgp = require('openpgp');
 	var publicKeyobj = openpgp.key.readArmored(publickey);
