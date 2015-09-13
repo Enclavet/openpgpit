@@ -54,7 +54,7 @@ rl.on('line', function(line){
 
 rl.on('close', function() {
     if(!setcontent) {
-        origheader = "Content-Type: text/plain";
+        origheader = "Content-Type: text/plain\n";
     }
 
     var fixmixed = "";
@@ -62,8 +62,8 @@ rl.on('close', function() {
        var origboundary = origheader.match(/boundary=("|)([^"&^\s]+)/i)[2];
        fixmixed += '--'+origboundary+'\n';
        fixmixed += 'Content-Type: text/plain\n';
+       origheader = origheader+'\n'+fixmixed;
     }
-    origheader = origheader+'\n'+fixmixed;
     body = origheader+''+body;
     if(!isencrypted) {
 	var openpgp = require('openpgp');
