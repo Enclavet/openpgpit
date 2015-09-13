@@ -54,7 +54,7 @@ rl.on('line', function(line){
 
 rl.on('close', function() {
     if(!setcontent) {
-        body = "Content-Type: text/plain\n"+body;
+        origheader = "Content-Type: text/plain";
     }
 
     var fixmixed = "";
